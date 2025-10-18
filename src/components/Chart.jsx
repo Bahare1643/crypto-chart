@@ -39,22 +39,27 @@ function Chart({prices, activeButton, loading}) {
     responsive: true,
     scales: {
       x: {
+        border: {
+          dash: [5,5],
+          display: true,
+        },
         grid: {
           color: "rgba(87, 84, 84, 0.26)",
           drawTicks: false,
-          borderDash: [8, 4],
           borderDashOffset: 0, 
-          drawBorder: true,
         },
         offset: true,
         ticks: { color: "#9ca3af" },
         beginAtZero: true,
       },
       y: {
+        border: {
+          dash: [5, 5],
+          display: true,
+        },
         grid: {
           color: "rgba(87, 84, 84, 0.26)",
           drawTicks: false,
-          lineDash: [4, 4],
           drawBorder: true,
         },
         ticks: { color: "#9ca3af" },
