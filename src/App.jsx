@@ -34,7 +34,7 @@ function App() {
       hoursArr.push(candleTime.getHours());
       return hoursArr;
     });
-    
+
     setPrices(data.c);
     setHours(hoursArr);
     setLoading(false);
@@ -46,6 +46,61 @@ function App() {
 
   console.log(hours);
 
+  const labels = hours;
+  const data = {
+    labels: labels,
+    datasets: [
+      {
+        label: activeButton.name,
+        data: prices,
+        borderColor: "#538e6a",
+        tension: 0.3,
+        fill: true,
+        backgroundColor: "rgba(83, 141, 105, 0.2)",
+        pointBackgroundColor: "#538e6a",
+        // Glow
+        pointStyle: 'circle',
+        pointBorderWidth: 10,
+        pointBorderColor: "#538e6a56",
+      }
+    ]
+  };
+
+  const options = {
+    responsive: true,
+    scales: {
+      x: {
+        border: {
+          dash: [5,5],
+          display: true,
+        },
+        grid: {
+          color: "rgba(87, 84, 84, 0.26)",
+          drawTicks: false,
+          borderDashOffset: 0, 
+        },
+        offset: true,
+        ticks: { color: "#9ca3af" },
+        beginAtZero: true,
+      },
+      y: {
+        border: {
+          dash: [5, 5],
+          display: true,
+        },
+        grid: {
+          color: "rgba(87, 84, 84, 0.26)",
+          drawTicks: false,
+          drawBorder: true,
+        },
+        ticks: { color: "#9ca3af" },
+        beginAtZero: true,
+      },
+    },
+    plugins: {
+      legend: {display: false},
+    },
+  };
 
   useEffect(() => {
     getPrices(activeButton);
@@ -55,7 +110,7 @@ function App() {
     <div className="flex flex-col gap-8 items-center justify-center min-h-screen bg-[#1b1b1b] text-white p-4">
       <Buttons coins={coins} activeButton={activeButton} setActiveButton={setActiveButton} />
       <div className="w-full max-w-3xl">
-        <Chart prices={prices} activeButton={activeButton} loading={loading} hours={hours}/>
+        <Chart data={data} options={options} loading={loading}/>
       </div>
     </div>
   );
