@@ -1,34 +1,61 @@
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
+import axios from 'axios';
 
 import Buttons from './components/Buttons';
 import Chart from './components/Chart';
 
 function App() {
 
-  const years = [
-    "2020-01-01", "2020-01-02",
-    "2021-01-01", "2021-01-02",
-    "2022-01-01", "2022-01-02",
-    "2023-01-01", "2023-01-02",
-    "2024-01-01", "2024-01-02",
-    "2025-01-01", "2025-01-02"
-  ];
   const coins = [
-    {name: "Bitcoin", symbol: "BTCIRT", years},
-    {name: "Tether", symbol: "USDTIRT", years},
-    {name: "Dai", symbol:"DAIIRT", years},
-    {name: "Sol", symbol:"SOLIRT", years},
+    {name: "Bitcoin", symbol: "BTCIRT"},
+    {name: "Tether", symbol: "USDTIRT"},
+    {name: "Dai", symbol:"DAIIRT"},
+    {name: "Sol", symbol:"SOLIRT"},
   ];
 
   const [prices, setPrices] = useState([]);
+  const [hours, setHours] = useState([]);
   const [activeButton, setActiveButton] = useState(coins[0]);
   const [loading, setLoading] = useState(false);
 
+  const hoursArr = [];
+
+  async function getPrices(coin) {
+    setLoading(true);
+
+    try{
+    const url = `https://apiv2.nobitex.ir/market/udf/history?symbol=${coin.symbol}&resolution=60&from=1704067200&to=1704153600`;
+    const response = await axios.get(url);
+    const data = response.data;
+
+    const oneDayHours = data.t;
+    oneDayHours.map((t) => {
+      const candleTime = new Date(t * 1000);
+      hoursArr.push(candleTime.getHours());
+      return hoursArr;
+    });
+    
+    setPrices(data.c);
+    setHours(hoursArr);
+    setLoading(false);
+
+    } catch(error) {
+      console.error("Error:", error)
+    }
+  };
+
+  console.log(hours);
+
+
+  useEffect(() => {
+    getPrices(activeButton);
+  }, [activeButton]);
+
   return(
     <div className="flex flex-col gap-8 items-center justify-center min-h-screen bg-[#1b1b1b] text-white p-4">
-      <Buttons years={years} coins={coins} prices={prices} setPrices={setPrices} activeButton={activeButton} setActiveButton={setActiveButton} loading={loading} setLoading={setLoading} />
+      <Buttons coins={coins} activeButton={activeButton} setActiveButton={setActiveButton} />
       <div className="w-full max-w-3xl">
-        <Chart prices={prices} activeButton={activeButton} loading={loading} />
+        <Chart prices={prices} activeButton={activeButton} loading={loading} hours={hours}/>
       </div>
     </div>
   );

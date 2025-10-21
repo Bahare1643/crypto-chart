@@ -13,9 +13,9 @@ ChartJS.register(
   Filler
 );
 
-function Chart({prices, activeButton, loading}) {
+function Chart({prices, activeButton, loading, hours}) {
 
-  const labels = [2020, 2021, 2022, 2023, 2024, 2025];
+  const labels = hours;
   const data = {
     labels: labels,
     datasets: [
