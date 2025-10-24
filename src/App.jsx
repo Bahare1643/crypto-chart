@@ -18,10 +18,12 @@ function App() {
   const [activeButton, setActiveButton] = useState(coins[0]);
   const [loading, setLoading] = useState(false);
 
-  const hoursArr = [];
+  
 
   async function getPrices(coin) {
     setLoading(true);
+
+    const hoursArr = [];
 
     try{
     const url = `https://apiv2.nobitex.ir/market/udf/history?symbol=${coin.symbol}&resolution=60&from=1704067200&to=1704153600`;
