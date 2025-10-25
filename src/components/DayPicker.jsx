@@ -1,7 +1,6 @@
 function dayPicker({day, getDay}) {
 
   return(
-    <>
     <input 
       type='date' 
       min="2024-01-01" 
@@ -9,7 +8,6 @@ function dayPicker({day, getDay}) {
       value={day}
       onChange={getDay}
       className="bg-[#1b1b1b] text-[#1b1b1b]" />
-      </>
   )
 };
 

@@ -39,9 +39,7 @@ function App() {
     try{
       let url = "";
       if (days.includes(day)) {
-        console.log(day);
         const index = days.indexOf(day);
-        console.log(index);
         const from = new Date(day).getTime() / 1000;
         const to = new Date(days[index + 1]).getTime() / 1000;
         url = `https://apiv2.nobitex.ir/market/udf/history?symbol=${coin.symbol}&resolution=60&from=${from}&to=${to}`;
@@ -52,8 +50,13 @@ function App() {
       const oneDayHours = data.t;
       oneDayHours.map((t) => {
         const candleTime = new Date(t * 1000);
-        hoursArr.push(candleTime.getHours());
-        return hoursArr;
+        const candleHour = candleTime.getHours();
+        // console.log(typeof(candleHour));
+        if (candleHour > 5 && candleHour < 24 || candleHour === 0) {
+          console.log(candleHour);
+          hoursArr.push(candleHour);
+          return hoursArr;
+        };
       });
 
       setPrices(data.c);
