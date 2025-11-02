@@ -6,6 +6,7 @@ import './App.css';
 import Buttons from './components/Buttons';
 import Chart from './components/Chart';
 import ShamsiCalendar from './components/ShamsiCalendar';
+import NotFound from './components/NotFound';
 
 // function
 import jalaaliToGregorian from './components/JalaaliToGregorian.jsx';
@@ -51,20 +52,18 @@ function App() {
   const [activeButton, setActiveButton] = useState(coins[0]);
   const [loading, setLoading] = useState(false);
   const [theDay, setTheDay] = useState(dates[1]);
+  const [notFound, setNotFound] = useState(false); 
 
   const getTheDay = (value) => {
     const selectedDate = value.format("YYYY-MM-DD");
     const gregorianDate = jalaaliToGregorian(selectedDate);
     
     const foundKey = Object.keys(dates).find((k) => dates[k] === gregorianDate);
-    // console.log(foundKey)
     if (foundKey) {
+      setNotFound(false);
       setTheDay(Number(foundKey))
-    } else {
-      // setTheDay(1)
-      // I should write another component that says the data is not found
-
-      console.log('no data')
+    } else if (!foundKey) {
+      setNotFound(true);
     }
   };
 
@@ -172,7 +171,10 @@ function App() {
       <ShamsiCalendar days={days} persianDates={persianDates} theDay={theDay} getTheDay={getTheDay}/>
       <Buttons coins={coins} activeButton={activeButton} setActiveButton={setActiveButton} />
       <div className="w-full max-w-3xl">
+        {notFound ? 
+        <NotFound /> :
         <Chart data={data} options={options} loading={loading}/>
+        }
       </div>
     </div>
   );
