@@ -4,12 +4,15 @@ import './App.css';
 
 import Buttons from './components/Buttons';
 import Chart from './components/Chart';
+import jalaaliToGregorian from './components/JalaaliToGregorian.jsx';
 
 import DatePicker from "react-multi-date-picker";
+import persian from "react-date-object/calendars/persian";
+import persian_fa from "react-date-object/locales/persian_fa";
+
 
 function App() {
 
-  // const days = ["2024-01-01", "2024-01-02", "2024-01-03", "2024-01-04", "2024-01-05", "2024-01-06", "2024-01-07", "2024-01-08", "2024-01-09", "2024-01-10"];
   const days = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
   const dates = {
     1: "2024-01-01", 
@@ -22,6 +25,19 @@ function App() {
     8: "2024-01-08", 
     9: "2024-01-09", 
     10: "2024-01-10",
+  };
+
+  const persianDates = {
+    1: "۱۴۰۲-۱۰-۱۱", 
+    2: "۱۴۰۲-۱۰-۱۲",
+    3: "۱۴۰۲-۱۰-۱۳", 
+    4: "۱۴۰۲-۱۰-۱۴", 
+    5: "۱۴۰۲-۱۰-۱۵", 
+    6: "۱۴۰۲-۱۰-۱۶", 
+    7: "۱۴۰۲-۱۰-۱۷", 
+    8: "۱۴۰۲-۱۰-۱۸", 
+    9: "۱۴۰۲-۱۰-۱۹", 
+    10: "۱۴۰۲-۱۰-۲۰",
   };
 
   const coins = [
@@ -38,14 +54,18 @@ function App() {
   const [theDay, setTheDay] = useState(dates[1]);
 
   const getTheDay = (value) => {
-    console.log(value)
-    console.log(value.format)
     const selectedDate = value.format("YYYY-MM-DD");
-    const foundKey = Object.keys(dates).find((k) => dates[k] === selectedDate);
+    const gregorianDate = jalaaliToGregorian(selectedDate);
+    
+    const foundKey = Object.keys(dates).find((k) => dates[k] === gregorianDate);
+    // console.log(foundKey)
     if (foundKey) {
       setTheDay(Number(foundKey))
     } else {
-      setTheDay(1)
+      // setTheDay(1)
+      // I should write another component that says the data is not found
+
+      console.log('no data')
     }
   };
 
@@ -150,12 +170,21 @@ function App() {
 
   return(
     <div className="flex flex-col gap-8 items-center justify-center min-h-screen bg-[#1b1b1b] text-white p-4">
-      <DatePicker 
-        value={days.includes(theDay) ? dates[theDay] : dates[1]}
+      <DatePicker
+        calendar={persian}
+        locale={persian_fa}
+        calendarPosition="bottom-right"
+        value={days.includes(theDay) ? persianDates[theDay] : persianDates[1]}
         onChange={getTheDay} 
         format="YYYY-MM-DD"
         inputClass="datepicker"
         />
+        {/* <DatePicker
+        value={days.includes(theDay) ? dates[theDay] : dates[1]}
+        onChange={getTheDay} 
+        format="YYYY-MM-DD"
+        inputClass="datepicker"
+        /> */}
       <Buttons coins={coins} activeButton={activeButton} setActiveButton={setActiveButton} />
       <div className="w-full max-w-3xl">
         <Chart data={data} options={options} loading={loading}/>
