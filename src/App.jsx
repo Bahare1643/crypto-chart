@@ -2,14 +2,13 @@ import {useState, useEffect} from 'react';
 import axios from 'axios';
 import './App.css';
 
+// components
 import Buttons from './components/Buttons';
 import Chart from './components/Chart';
+import ShamsiCalendar from './components/ShamsiCalendar';
+
+// function
 import jalaaliToGregorian from './components/JalaaliToGregorian.jsx';
-
-import DatePicker from "react-multi-date-picker";
-import persian from "react-date-object/calendars/persian";
-import persian_fa from "react-date-object/locales/persian_fa";
-
 
 function App() {
 
@@ -170,21 +169,7 @@ function App() {
 
   return(
     <div className="flex flex-col gap-8 items-center justify-center min-h-screen bg-[#1b1b1b] text-white p-4">
-      <DatePicker
-        calendar={persian}
-        locale={persian_fa}
-        calendarPosition="bottom-right"
-        value={days.includes(theDay) ? persianDates[theDay] : persianDates[1]}
-        onChange={getTheDay} 
-        format="YYYY-MM-DD"
-        inputClass="datepicker"
-        />
-        {/* <DatePicker
-        value={days.includes(theDay) ? dates[theDay] : dates[1]}
-        onChange={getTheDay} 
-        format="YYYY-MM-DD"
-        inputClass="datepicker"
-        /> */}
+      <ShamsiCalendar days={days} persianDates={persianDates} theDay={theDay} getTheDay={getTheDay}/>
       <Buttons coins={coins} activeButton={activeButton} setActiveButton={setActiveButton} />
       <div className="w-full max-w-3xl">
         <Chart data={data} options={options} loading={loading}/>
