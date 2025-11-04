@@ -10,22 +10,9 @@ import NotFound from './components/NotFound';
 
 // function
 import jalaaliToGregorian from './components/JalaaliToGregorian.jsx';
+import nextDate from './components/NextDay';
 
 function App() {
-
-  const days = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-  const dates = {
-    1: "2024-01-01", 
-    2: "2024-01-02", 
-    3: "2024-01-03", 
-    4: "2024-01-04", 
-    5: "2024-01-05", 
-    6: "2024-01-06", 
-    7: "2024-01-07", 
-    8: "2024-01-08", 
-    9: "2024-01-09", 
-    10: "2024-01-10",
-  };
 
   const persianDates = {
     1: "۱۴۰۲-۱۰-۱۱", 
@@ -51,32 +38,38 @@ function App() {
   const [hours, setHours] = useState([]);
   const [activeButton, setActiveButton] = useState(coins[0]);
   const [loading, setLoading] = useState(false);
-  const [theDay, setTheDay] = useState(dates[1]);
-  const [notFound, setNotFound] = useState(false); 
+  const [theDay, setTheDay] = useState("2024-01-01");
+  const [notFound, setNotFound] = useState(false);
+
+  const nextDay = nextDate(theDay);
 
   const getTheDay = (value) => {
     const selectedDate = value.format("YYYY-MM-DD");
-    const gregorianDate = jalaaliToGregorian(selectedDate);
+    setTheDay(selectedDate);
+    // console.log(`selectedDate is ${selectedDate}`);
+
+    // console.log(selectedDate);
+    // const gregorianDate = jalaaliToGregorian(selectedDate);
     
-    const foundKey = Object.keys(dates).find((k) => dates[k] === gregorianDate);
-    if (foundKey) {
-      setNotFound(false);
-      setTheDay(Number(foundKey))
-    } else if (!foundKey) {
-      setNotFound(true);
-    }
+    // const foundKey = Object.keys(dates).find((k) => dates[k] === selectedDate);
+    // if (foundKey) {
+    //   setNotFound(false);
+    //   setTheDay(Number(foundKey))
+    // } else if (!foundKey) {
+    //   setNotFound(true);
+    // }
   };
 
-  function getPrices(coin, currentDay) {
+  function getPrices(coin) {
     setLoading(true);
 
     try{
       const hoursArr = [];
       
       let url = '';
-      async function showData(dayNumber) {
-        const from = new Date(dates[dayNumber]).getTime() / 1000;
-        const to = new Date(dates[dayNumber + 1]).getTime() / 1000;
+      async function showData() {
+        const from = new Date(theDay).getTime() / 1000;
+        const to = new Date(nextDay).getTime() / 1000;
         url = `https://apiv2.nobitex.ir/market/udf/history?symbol=${coin.symbol}&resolution=60&from=${from}&to=${to}`;
         const response = await axios.get(url);
         const data = response.data;
@@ -96,17 +89,14 @@ function App() {
         setLoading(false);
       }
 
-      if (days.includes(currentDay) && currentDay !== 10) {
-        showData(currentDay);
-      } else {
-        showData(1);
-      }
+      showData();
     } catch (error) {
       console.error("Error:", error)
     }
   };
 
   const labels = hours;
+
   const data = {
     labels: labels,
     datasets: [
@@ -168,7 +158,7 @@ function App() {
 
   return(
     <div className="flex flex-col gap-8 items-center justify-center min-h-screen bg-[#1b1b1b] text-white p-4">
-      <ShamsiCalendar days={days} persianDates={persianDates} theDay={theDay} getTheDay={getTheDay}/>
+      <ShamsiCalendar persianDates={persianDates} theDay={theDay} getTheDay={getTheDay}/>
       <Buttons coins={coins} activeButton={activeButton} setActiveButton={setActiveButton} />
       <div className="w-full max-w-3xl">
         {notFound ? 
