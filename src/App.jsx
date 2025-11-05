@@ -87,12 +87,10 @@ function App() {
         borderColor: "#538e6a",
         tension: 0.3,
         fill: true,
-        // backgroundColor: "rgba(83, 141, 105, 0.2)",
         backgroundColor: (context) => {
           const chart = context.chart;
           const {ctx, chartArea} = chart;
           if (!chartArea) {
-            // Chart area isn't ready yet
             return null;
           }
           
