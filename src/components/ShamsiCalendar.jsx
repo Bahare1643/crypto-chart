@@ -6,8 +6,8 @@ function ShamsiCalendar({theDay, getTheDay}) {
   return(
     <div>
       <DatePicker
-        // calendar={persian}
-        // locale={persian_fa}
+        calendar={persian}
+        locale={persian_fa}
         calendarPosition="bottom-right"
         value={theDay}
         onChange={getTheDay} 

@@ -14,15 +14,16 @@ function jalaaliToGregorian (theDay) {
   // converting jalaali year, month and day into gregorian year, month and day
   const {gy, gm, gd} = jalaali.toGregorian(jy, jm, jd);
 
-  let gregorianDate = null;
+  let gregorianDate;
 
+  // gm = 1 gd = 10
   if (gm < 10 && gd < 10) {
     gregorianDate = gy + '-' + 0 + gm + '-' + 0 + gd;
-  } else if (gm > 10 && gd > 10) {
+  } else if (gm >= 10 && gd >= 10) {
     gregorianDate = gy + '-' + gm + '-' + gd;
-  } else if (gm < 10 && gd > 10) {
-    gregorianDate = gy + '-' +0 + gm + '-' + gd;
-  } else if (gm > 10 && gd < 10) {
+  } else if (gm < 10 && gd >= 10) {
+    gregorianDate = gy + '-' + 0 + gm + '-' + gd;
+  } else if (gm >= 10 && gd < 10) {
     gregorianDate = gy + '-' + gm + '-' + 0 + gd;
   };
 

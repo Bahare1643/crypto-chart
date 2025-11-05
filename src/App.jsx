@@ -8,24 +8,11 @@ import Chart from './components/Chart';
 import ShamsiCalendar from './components/ShamsiCalendar';
 import NotFound from './components/NotFound';
 
-// function
+// functions
 import jalaaliToGregorian from './components/JalaaliToGregorian.jsx';
 import nextDate from './components/NextDay';
 
 function App() {
-
-  const persianDates = {
-    1: "۱۴۰۲-۱۰-۱۱", 
-    2: "۱۴۰۲-۱۰-۱۲",
-    3: "۱۴۰۲-۱۰-۱۳", 
-    4: "۱۴۰۲-۱۰-۱۴", 
-    5: "۱۴۰۲-۱۰-۱۵", 
-    6: "۱۴۰۲-۱۰-۱۶", 
-    7: "۱۴۰۲-۱۰-۱۷", 
-    8: "۱۴۰۲-۱۰-۱۸", 
-    9: "۱۴۰۲-۱۰-۱۹", 
-    10: "۱۴۰۲-۱۰-۲۰",
-  };
 
   const coins = [
     {name: "Bitcoin", symbol: "BTCIRT"},
@@ -38,26 +25,12 @@ function App() {
   const [hours, setHours] = useState([]);
   const [activeButton, setActiveButton] = useState(coins[0]);
   const [loading, setLoading] = useState(false);
-  const [theDay, setTheDay] = useState("2024-01-01");
+  const [theDay, setTheDay] = useState("۱۴۰۲-۱۰-۱۱");
   const [notFound, setNotFound] = useState(false);
-
-  const nextDay = nextDate(theDay);
 
   const getTheDay = (value) => {
     const selectedDate = value.format("YYYY-MM-DD");
     setTheDay(selectedDate);
-    // console.log(`selectedDate is ${selectedDate}`);
-
-    // console.log(selectedDate);
-    // const gregorianDate = jalaaliToGregorian(selectedDate);
-    
-    // const foundKey = Object.keys(dates).find((k) => dates[k] === selectedDate);
-    // if (foundKey) {
-    //   setNotFound(false);
-    //   setTheDay(Number(foundKey))
-    // } else if (!foundKey) {
-    //   setNotFound(true);
-    // }
   };
 
   function getPrices(coin) {
@@ -65,28 +38,36 @@ function App() {
 
     try{
       const hoursArr = [];
+
+      const gregorianDay = jalaaliToGregorian(theDay);
+      const nextDay = nextDate(gregorianDay);
       
       let url = '';
       async function showData() {
-        const from = new Date(theDay).getTime() / 1000;
+        const from = new Date(gregorianDay).getTime() / 1000;
         const to = new Date(nextDay).getTime() / 1000;
         url = `https://apiv2.nobitex.ir/market/udf/history?symbol=${coin.symbol}&resolution=60&from=${from}&to=${to}`;
         const response = await axios.get(url);
         const data = response.data;
 
-        const oneDayHours = data.t;
-        oneDayHours.map((t) => {
-          const candleTime = new Date(t * 1000);
-          const candleHour = candleTime.getHours();
-          if (candleHour > 5 && candleHour < 24 || candleHour === 0) {
-            hoursArr.push(candleHour);
-            return hoursArr;
-          };
-        });
+        if (data.s === "ok") {
+          setNotFound(false);
+          const oneDayHours = data.t;
+          oneDayHours.map((t) => {
+            const candleTime = new Date(t * 1000);
+            const candleHour = candleTime.getHours();
+            if (candleHour > 5 && candleHour < 24 || candleHour === 0) {
+              hoursArr.push(candleHour);
+              return hoursArr;
+            };
+          });
 
-        setPrices(data.c);
-        setHours(hoursArr);
-        setLoading(false);
+          setPrices(data.c);
+          setHours(hoursArr);
+          setLoading(false);
+        } else if (data.s === "no_data") {
+          setNotFound(true);
+        }
       }
 
       showData();
@@ -158,7 +139,7 @@ function App() {
 
   return(
     <div className="flex flex-col gap-8 items-center justify-center min-h-screen bg-[#1b1b1b] text-white p-4">
-      <ShamsiCalendar persianDates={persianDates} theDay={theDay} getTheDay={getTheDay}/>
+      <ShamsiCalendar theDay={theDay} getTheDay={getTheDay}/>
       <Buttons coins={coins} activeButton={activeButton} setActiveButton={setActiveButton} />
       <div className="w-full max-w-3xl">
         {notFound ? 
